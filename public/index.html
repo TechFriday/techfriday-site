@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <canvas id="triangles-surface" width="1000" height="500"></canvas>
+
+  <script type="text/javascript">
+    (function() {
+      var patterns = {
+        'T': ("--<>----------\n"+
+             "-<>-----------\n"+
+             "--<-----------\n"+
+             "-->-----------\n"+
+             "--<-----------\n"+
+             "-->-----------\n"+
+             "--<-----------").split("\n"),
+        'b': ("--------------\n"+
+             "--------------\n"+
+             "<-------------\n"+
+             ">-------------\n"+
+             "<>------------\n"+
+             "><------------\n"+
+             "<>------------").split("\n")
+      };
+
+      var Image = function(img) {
+        this.element = img;
+        var width = this.width = img.width;
+        var height = this.height = img.height;
+        var ratio = width / height;
+
+        this.fitIntoCanvas = function (canvas) {
+          var scaleFactor = ratio > canvas.sidesRatio ? canvas.height / height : canvas.width / width;
+
+          return [(canvas.width - width * scaleFactor) / 2,
+            (canvas.height - height * scaleFactor) / 2,
+            width * scaleFactor, height * scaleFactor];
+        };
+      };
+
+      var Triangle = function(side, margin) {
+        var cellWidth = margin +  side * Math.sqrt(3) / 2;
+        var cellHalfHeight = cellWidth / Math.sqrt(3);
+
+        this.draw = function(context, column, row) {
+          var left = column * cellWidth;
+          var top = row * cellHalfHeight;
+          var direction = column % 2 == row % 2 ? 1.0 : -1.0;
+
+          var translateX = direction > 0 ? left : left + cellWidth;
+          var translateY = top + cellHalfHeight;
+
+          context.translate(translateX, translateY);
+
+          context.moveTo(direction * margin, 0);
+          context.lineTo(direction * (cellWidth - 0.5 * margin), -side / 2);
+          context.lineTo(direction * (cellWidth - 0.5 * margin), side / 2);
+          context.lineTo(direction * margin, 0);
+
+          context.translate(-translateX, -translateY);
+        };
+      };
+
+      function loadImage(url, callback) {
+        var img = document.createElement('IMG');
+        img.onload = function () {
+          callback(new Image(img));
+        };
+        img.src = url;
+      }
+
+      var Canvas = function(canvas) {
+        var canvas = this.canvas = canvas;
+        this.context = canvas.getContext('2d');
+        var width = this.width = canvas.width;
+        var height = this.height = canvas.height;
+        this.sidesRatio = width / height;
+
+        if (window.devicePixelRatio) {
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          canvas.width = window.devicePixelRatio * width;
+          canvas.height = window.devicePixelRatio * height;
+          this.context.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+      };
+
+      var Display = function(id) {
+        var canvas = this.canvas = new Canvas(document.getElementById(id));
+      };
+
+      var handlePattern = function (pattern, triangle, context) {
+        for(var row = 0; row < pattern.length; row++) {
+          var line = pattern[row];
+          var chars = line.split('');
+          for(var col = 0; col < chars.length; col++) {
+            if (chars[col] != '-') {
+              triangle.draw(context, col, row);
+            }
+          }
+        }
+      };
+
+      var display = new Display('triangles-surface');
+      var ctx = display.canvas.context;
+
+
+      loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg', function(img) {
+        console.log(img);
+        var triangle = new Triangle(100, 5);
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.translate(-100, 0);
+        handlePattern(patterns['T'], triangle, ctx);
+        ctx.translate(300, 0);
+        handlePattern(patterns['b'], triangle, ctx);
+        ctx.translate(-300, 0);
+
+        ctx.closePath();
+
+        ctx.clip();
+
+        var fitParams = img.fitIntoCanvas(display.canvas);
+        fitParams.unshift(img.element);
+        console.log(fitParams);
+        ctx.drawImage.apply(ctx, fitParams);
+
+        ctx.restore();
+      });
+
+
+
+    })();
+  </script>
+</body>
+</html>
