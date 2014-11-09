@@ -4,11 +4,22 @@
   <style type="text/css">
     body {
       /*background: #000000;*/
+      position: relative;
+    }
+
+    #custom-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
     }
   </style>
 </head>
 <body>
-  <canvas id="triangles-surface" width="1000" height="700"></canvas>
+  <canvas id="triangles-surface" width="700" height="700"></canvas>
+  <input id="custom-background" type="file" />
 
   <script type="text/javascript">
     (function() {
@@ -110,9 +121,7 @@
       var display = new Display('triangles-surface');
       var ctx = display.canvas.context;
 
-
-      loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg', function(img) {
-        console.log(img);
+      var handleImage = function(img) {
         var triangle = new Triangle(150, 10);
         ctx.save();
 
@@ -130,13 +139,28 @@
 
         var fitParams = img.fitIntoCanvas(display.canvas);
         fitParams.unshift(img.element);
-        console.log(fitParams);
         ctx.drawImage.apply(ctx, fitParams);
 
         ctx.restore();
-      });
+      };
 
+      loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg',
+        handleImage);
 
+      var input = document.getElementById('custom-background');
+      input.onchange = function (event) {
+        if (this.files && this.files[0]) {
+          var reader = new FileReader()
+          reader.onload = function (e) {
+            var data = e.target.result;
+            var img = document.createElement('IMG');
+            img.setAttribute('src', data);
+
+            handleImage(new Image(img));
+          };
+          reader.readAsDataURL(this.files[0])
+        }
+      };
 
     })();
   </script>
