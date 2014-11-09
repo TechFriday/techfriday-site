@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>TechFriday and TechBar</title>
+  <title>TechFriday &amp; TechBar</title>
   <style type="text/css">
     body {
       width: 100%;
@@ -10,6 +10,7 @@
       margin: 25% 0 0 0;
       padding: 0;
       text-align: center;
+      background: #000000;
     }
 
     #triangles-surface {
@@ -148,7 +149,7 @@
       var ctx = display.canvas.context;
 
       var handleImage = function(img) {
-        var triangle = new Triangle(100, 7.5);
+        var triangle = new Triangle(100, 6);
         ctx.save();
 
         ctx.beginPath();
@@ -181,8 +182,7 @@
       if (window.localStorage && (saved = localStorage.getItem('techFridayBackground'))) {
         handleImage(wrapBase64AsImage(saved));
       } else {
-        loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg',
-            handleImage);
+        loadImage('./default-background.jpg', handleImage);
       }
 
 
