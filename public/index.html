@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <canvas id="triangles-surface" width="430" height="450"></canvas>
+  <canvas id="triangles-surface" width="450" height="450"></canvas>
   <input id="custom-background" type="file" />
 
   <script type="text/javascript">
@@ -170,16 +170,32 @@
         ctx.restore();
       };
 
-      loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg',
-        handleImage);
+
+      var wrapBase64AsImage = function(b64) {
+        var img = document.createElement('IMG');
+        img.setAttribute('src', b64);
+        return new Image(img);
+      };
+
+      var saved;
+      if (window.localStorage && (saved = localStorage.getItem('techFridayBackground'))) {
+        handleImage(wrapBase64AsImage(saved));
+      } else {
+        loadImage('http://www.bavaria-yachtbau.com/fileadmin/Template/Public/Images/yachts/cruiser41/slider/cruiser41.jpg',
+            handleImage);
+      }
+
 
       var input = document.getElementById('custom-background');
       bindEventHandler(input, 'change', function (event) {
         if (input.files && input.files[0]) {
           bindEventHandler(new FileReader(), 'load', function (e) {
-            var img = document.createElement('IMG');
-            img.setAttribute('src', e.target.result);
-            handleImage(new Image(img));
+            var b64 = e.target.result;
+            handleImage(wrapBase64AsImage(b64));
+
+            if (window.localStorage) {
+              localStorage.setItem('techFridayBackground', b64);
+            }
           }).readAsDataURL(input.files[0]);
         }
       });
