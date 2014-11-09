@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset='utf-8' />
+  <title>TechFriday and TechBar</title>
   <style type="text/css">
     body {
-      /*background: #000000;*/
-      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 25% 0 0 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    #triangles-surface {
+      display: inline-block;
+      margin-top: -225px;
     }
 
     #custom-background {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -18,7 +28,7 @@
   </style>
 </head>
 <body>
-  <canvas id="triangles-surface" width="700" height="700"></canvas>
+  <canvas id="triangles-surface" width="430" height="450"></canvas>
   <input id="custom-background" type="file" />
 
   <script type="text/javascript">
@@ -31,13 +41,29 @@
               "--<-----------\n"+
               "-->-----------\n"+
               "--<-----------").split("\n"),
+        'F': ("--<-----------\n"+
+              "-<>-----------\n"+
+              "->------------\n"+
+              "-<>-----------\n"+
+              "->------------\n"+
+              "-<------------\n"+
+              "->------------").split("\n"),
         'b': ("--------------\n"+
-             "--------------\n"+
-             "<-------------\n"+
-             ">-------------\n"+
-             "<>------------\n"+
-             "><------------\n"+
-             "<>------------").split("\n")
+              "--------------\n"+
+              "<-------------\n"+
+              ">-------------\n"+
+              "<>------------\n"+
+              "><------------\n"+
+              "<>------------").split("\n")
+      };
+
+      var bindEventHandler = function(object, eventName, handler) {
+        if (object.addEventListener) {
+          object.addEventListener(eventName, handler);
+        } else {
+          object['on' + eventName] = handler;
+        }
+        return object;
       };
 
       var Image = function(img) {
@@ -122,16 +148,16 @@
       var ctx = display.canvas.context;
 
       var handleImage = function(img) {
-        var triangle = new Triangle(150, 10);
+        var triangle = new Triangle(100, 7.5);
         ctx.save();
 
         ctx.beginPath();
 
         ctx.translate(-100, 0);
         handlePattern(patterns['T'], triangle, ctx);
-        ctx.translate(440, 0);
-        handlePattern(patterns['b'], triangle, ctx);
-        ctx.translate(-440, 0);
+        ctx.translate(250, 0);
+        handlePattern(patterns['F'], triangle, ctx);
+        ctx.translate(-250, 0);
 
         ctx.closePath();
 
@@ -148,19 +174,15 @@
         handleImage);
 
       var input = document.getElementById('custom-background');
-      input.onchange = function (event) {
-        if (this.files && this.files[0]) {
-          var reader = new FileReader()
-          reader.onload = function (e) {
-            var data = e.target.result;
+      bindEventHandler(input, 'change', function (event) {
+        if (input.files && input.files[0]) {
+          bindEventHandler(new FileReader(), 'load', function (e) {
             var img = document.createElement('IMG');
-            img.setAttribute('src', data);
-
+            img.setAttribute('src', e.target.result);
             handleImage(new Image(img));
-          };
-          reader.readAsDataURL(this.files[0])
+          }).readAsDataURL(input.files[0]);
         }
-      };
+      });
 
     })();
   </script>
