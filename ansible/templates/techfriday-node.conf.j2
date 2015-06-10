@@ -1,2 +1,8 @@
 starts on startup
-exec forever start /var/www/techfriday/app.js
+
+chdir /var/www/techfriday
+setuid web
+respawn
+limit rss 314572800 314572800
+env NODE_ENV=production
+exec node js/server.js > production.log 2>&1
