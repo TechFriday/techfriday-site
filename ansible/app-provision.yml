@@ -1,0 +1,26 @@
+---
+- hosts: app
+  sudo: yes
+
+  tasks:
+    - name: Install software
+      apt: pkg={{item}} state=latest force=yes
+      sudo: yes
+      with_items:
+        - git
+        - nodejs
+        - npm
+        
+    - name: Install forever
+      npm: name=forever global=yes state=latest
+      
+    - name: Create web user
+      user: name=web
+ 
+    - name: Create project folder
+      file: path=/var/www/techfriday group=web owner=web mode=755 state=directory
+      
+    - name: Add upstart script
+      template: src=templates/techfriday-node.conf.j2 dest=/etc/init/techfriday-node.conf
+      
+    
