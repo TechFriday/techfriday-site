@@ -1,0 +1,26 @@
+---
+- hosts: app
+  
+  sudo: yes
+  
+  tasks:
+    - name: copy node application
+      synchronize: src=../src/{{ item }} dest=/var/www/techfriday recursive=yes
+      sudo_user: web
+      with_items:
+        - app.js
+        - package.json
+        - public
+    
+    - npm: path=/var/www/techfriday production=yes
+    
+    - name: Set ownership of directories
+      file: path=/var/www/techfriday group=web owner=web mode=755 state=directory recurse=yes
+      
+    - name: restart upstart script
+      service: name=techfriday-node state=restarted
+      
+
+      
+    
+  

@@ -1,0 +1,34 @@
+---
+- hosts: app
+  sudo: yes
+
+  tasks:
+    - name: Install software
+      apt: pkg={{item}} state=latest force=yes
+      sudo: yes
+      with_items:
+        - git
+        - nodejs-legacy
+        - npm
+      
+    - name: Create web user
+      user: name=web
+ 
+    - name: Create project folder
+      file: path=/var/www/techfriday group=web owner=web mode=755 state=directory
+      
+    - name: Add upstart script
+      template: src=templates/techfriday-node.conf.j2 dest=/etc/init/techfriday-node.conf
+      
+    - name: Add nginx config
+      template: src=templates/nginx-to-node.j2 dest=/etc/nginx/sites-available/techfriday
+      
+    - name: Enable nginx config
+      file: src=/etc/nginx/sites-available/techfriday dest=/etc/nginx/sites-enabled/techfriday state=link
+      
+    - name: Avoid default template
+      file: path=/etc/nginx/sites-enabled/default state=absent
+      
+    - name: Restart nginx
+      service: name=nginx state=restarted
+      

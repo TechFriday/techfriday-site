@@ -1,0 +1,6 @@
+chdir /var/www/techfriday
+setuid web
+respawn
+limit rss 314572800 314572800
+env NODE_ENV=production
+exec npm start
