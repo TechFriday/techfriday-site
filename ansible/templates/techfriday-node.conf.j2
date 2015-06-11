@@ -1,8 +1,6 @@
-starts on startup
-
 chdir /var/www/techfriday
 setuid web
 respawn
 limit rss 314572800 314572800
 env NODE_ENV=production
-exec node js/server.js > production.log 2>&1
+exec npm start

@@ -1,9 +1,0 @@
----
-- hosts: techfriday
-  
-  tasks:
-  - name: copy web files
-    copy: src=public/{{ item }} dest=/home/{{ ansible_ssh_user }}/web/techfriday.io/{{ item }}
-    with_items:
-      - index.html
-      - default-background.jpg
