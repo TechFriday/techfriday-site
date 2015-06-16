@@ -2,9 +2,9 @@
   "name": "techfriday-site",
   "version": "0.0.2",
   "description": "Site of the TechFriday community",
-  "main": "app.js",
+  "main": "server/server.js",
   "scripts": {
-    "start": "forever app.js",
+    "start": "forever server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
