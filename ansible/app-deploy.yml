@@ -8,9 +8,9 @@
       synchronize: src=../src/{{ item }} dest=/var/www/techfriday recursive=yes
       sudo_user: web
       with_items:
-        - app.js
         - package.json
-        - public
+        - server
+        - client
     
     - npm: path=/var/www/techfriday production=yes
     
