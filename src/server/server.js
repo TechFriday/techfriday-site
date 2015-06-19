@@ -1,5 +1,5 @@
 // SETTINGS
-const PORT = 80;
+const PORT = 3000;
 const MAX_AGE = '30d';
 const STATIC_FILES_FOLDER = 'client';
 const REST_API_ROOT_ENDPOINT = '/api';
