@@ -1,7 +1,7 @@
 // SETTINGS
 const PORT = 3000;
 const MAX_AGE = '30d';
-const STATIC_FILES_FOLDER = 'client';
+const STATIC_FILES_FOLDER = 'client/new';
 const REST_API_ROOT_ENDPOINT = '/api';
 
 var express = require('express');
